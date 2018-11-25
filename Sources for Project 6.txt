@@ -1,0 +1,9 @@
+SOURCES FOR PROJECT 6
+
+> 1. https://stackoverflow.com/questions/7531868/how-to-rename-a-single-column-in-a-data-frame
+> 2. https://s3.amazonaws.com/udacity-hosted-downloads/ud651/wineQualityInfo.txt
+> 3. https://www.r-statistics.com/2013/05/log-transformations-for-skewed-and-wide-distributions-from-practical-data-science-with-r/
+> 4. DAND Semester 2, Exploratory Data Analysis, Lesson 7, "Quiz: Scatterplot Matrices"
+> 5. https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf
+> 6. http://www.sthda.com/english/wiki/ggplot2-title-main-axis-and-legend-titles
+> 7. https://cran.r-project.org/mirrors.html

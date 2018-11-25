@@ -1,0 +1,717 @@
+---
+title: "Analysis of the Factors that Influence Wine Quality"
+author: "Brian Campbell"
+date: "September 16, 2018"
+output: html_document
+---
+========================================================
+
+## Pre-Analysis
+> This installs and loads the necessary packages to conduct the analysis.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Initial_Packages}
+
+# This sets the CRAN mirror.
+# This comes from Source 7 in the Sources Section.
+r = getOption("repos")
+r["CRAN"] = "http://cloud.r-project.org/"
+options(repos = r)
+# This installs all packages neccessary for the analysis.
+install.packages("ggplot2", dependencies = T)
+install.packages("dplyr", dependencies = T)
+install.packages("knitr", dependencies = T)
+install.packages("reshape2")
+install.packages("plyr")
+install.packages("memisc")
+install.packages("RColorBrewer")
+
+# This opens the packages.
+library(ggplot2)
+library(dplyr)
+library(reshape2)
+library(plyr)
+library(memisc)
+library(knitr)
+library(RColorBrewer)
+
+# Notice that the parameter "echo" was set to FALSE for this code chunk. This
+# prevents the code from displaying in the knitted HTML output. You should set
+# echo=FALSE for all code chunks in your file, unless it makes sense for your
+# report to show the code that generated a particular plot.
+
+# The other parameters for "message" and "warning" should also be set to FALSE
+# for other code chunks once you have verified that each plot comes out as you
+# want it to. This will clean up the flow of your report.
+
+```
+> This sets the working directory and insures that all columns in the data set are labeled.
+
+```{r echo=FALSE, Load_the_Data}
+# Load the Data
+# This shows the current working directory.
+getwd()
+
+# This sets the working directory in order to upload wineQualityReds.csv.
+setwd("/Users/bgcam/OneDrive/Documents/Udacity Degree/Semester 2/Part 2")
+
+# This loads wineQualityReds.csv.
+df <- read.csv('wineQualityReds.csv')
+
+# This checks to see that the data was loaded.
+head(df)
+
+# This renames the column "X" to "wine.id.num"
+# This comes from Source 1 in the Sources Section.
+names(df)[names(df) == "X"] <- "wine.id.num"
+
+# This returns the names of the columns.
+names(df)
+
+# This checks to see that "X" was succesfully renamed to "wine.id.num".
+head(df)
+
+# This determines the structure of the dataset.
+str(df)
+```
+## Data Set Summary
+> The data set, wineQualityReds.csv, stores information about red wines. It contains 1,599 observations of wine. The input variables are properties of the wine (IE PH values, residual sugar, and total sulfur dioxide), all of which are quantitative variables with the exception of wine ID number. The output variable is the quality variable. Quality is rated on a scale from 0-10, 0 being the worst, and quality is derived from the median quality rating of at least three wine experts.
+
+> **Data Set Summary Source:** Source 2 in the Sources Section.
+
+## Univariate Plots Section
+
+> **Histogram of "fixed.acidity"**
+
+```{r echo=FALSE, Univariate_Plots_fixed_acidity}
+# This looks at the descriptive statisitcs for the values of "fixed.acidity".
+summary(df$fixed.acidity)
+
+# This creates a histogram of the "fixed.acidity"" values.
+ggplot(aes(x = fixed.acidity), data = df) +
+  geom_histogram(binwidth = 0.1) +
+  scale_x_continuous(limits = c(3, 17), breaks = seq(0, 16, 1))
+  
+```
+
+>> **Histogram of "fixed.acidity"**: The data follows a normal distribution that is skewed right. Median fixed acidity levels are 7.90, while the inner quartile range is 7.10 - 9.20.
+
+>**Histogram of "volatile.acidity"**
+
+```{r echo=FALSE, Univariate_Plots_volatile_acidity}
+# This looks at the descriptive statisitcs for the values of
+# "volatile.acidity".
+summary(df$volatile.acidity)
+
+# This creates a histogram of the "volatile.acidity"" values.
+ggplot(aes(x = volatile.acidity), data = df) +
+  geom_histogram(binwidth = 0.05) +
+  scale_x_continuous(limits = c(0, 2), breaks = seq(0, 2, 0.10))
+
+```
+
+>> **Histogram of "volatile.acidity"**: The data is bimodally distributed with a slight skew to the right. The median level of volatile acidity is 0.52. The inner quartile range of volatile acidity is 0.39 - 0.64.
+
+> **Histogram of "citric.acid"**:
+
+```{r echo=FALSE, Univariate_Plots_citric_acid_1}
+# This looks at the descriptive statisitcs for the values of "citric.acid".
+summary(df$citric.acid)
+
+# This creates a histogram of the "citric.acid" values.
+ggplot(aes(x = citric.acid), data = df) +
+  geom_histogram(binwidth = 0.01) +
+  scale_x_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.10))
+
+```
+
+>>**Histogram of "citric.acid"**: The data is trimodal. The median level of citric acid 0.260. The inner quartile range is from 0.090 - 0.420.
+
+> **Histogram of "residual.sugar"**
+
+```{r echo=FALSE, Univariate_Plots_residual_sugar}
+
+# This looks at the descriptive statisitcs for the values of 
+# "residual.sugar".
+summary(df$residual.sugar)
+
+# This creates a histogram of the "residual.sugar" values.
+ggplot(aes(x = residual.sugar), data = df) +
+  geom_histogram(binwidth = .25) +
+  scale_x_continuous(limits = c(0, 16), 
+  breaks = seq(0, 16, 1))
+```
+
+>> **Histogram of "residual.sugar"**: The data is normally distributed with a slight skew to the right with some outliers. The median level of residual sugar is 2.20. The inner quartile range is from 1.90 - 2.60.
+
+> **Histogram of "chlorides"**
+
+```{r echo=FALSE, Univariate_Plots_chlorides}
+# This looks at the descriptive statisitcs for the values of "chlorides".
+summary(df$chlorides)
+
+# This creates a histogram of the "chlorides"" values.
+ggplot(aes(x = chlorides), data = df) +
+  geom_histogram(binwidth = 0.01) +
+  scale_x_continuous(limits = c(0, 0.65), breaks = seq(0, 0.65, 0.10))
+
+```
+
+>> **Histogram of "chlorides"**: The data is normally distributed with a slight skew to the right with some outliers. The median level of chlorides is 0.079. The inner quartile range is from 0.070 - 0.090.
+
+> **Histogram of "free.sulfur.dioxide"**
+
+```{r echo=FALSE, Univariate_Plots_free_sulfur_dioxide}
+# This looks at the descriptive statisitcs for the values of 
+# "free.sulfur.dioxide".
+summary(df$free.sulfur.dioxide)
+
+# This creates a histogram of the "free.sulfur.dioxide"" values.
+ggplot(aes(x = free.sulfur.dioxide), data = df) +
+  geom_histogram(binwidth = 1) +
+  scale_x_continuous(limits = c(0, 73), breaks = seq(0, 73, 10))
+```
+
+>> **Histogram of "free.sulfur.dioxide"**: The data is skewed right. The median level of sulfur dioxide is 14. The inner quartile range of sulfur dioxide is from 7 - 21.
+
+> **Histogram of "total.sulfur.dioxide"**
+
+```{r echo=FALSE, Univariate_Plots_total_sulfur_dioxide}
+# This looks at the descriptive statisitcs for the values of 
+# "total.sulfur.dioxide".
+summary(df$total.sulfur.dioxide)
+
+# This creates a histogram of the "total.sulfur.dioxide" values.
+ggplot(aes(x = total.sulfur.dioxide), data = df) +
+  geom_histogram(binwidth = 10) +
+  scale_x_continuous(limits = c(0, 300), breaks = seq(0, 300, 20))
+```
+
+>> **Histogram of "total.sulfur.dioxide"**: The data is skewed to the right with some outliers. The median level of sulfur dioxide is 38. The inner quartile range is from 22 - 62.
+
+> **Histogram of "density"**
+
+```{r echo=FALSE, Univariate_Plots_density}
+# This looks at the descriptive statisitcs for the values of "density".
+summary(df$density)
+
+# This creates a histogram of the "density"" values.
+ggplot(aes(x = density), data = df) +
+  geom_histogram()
+```
+
+>> **Histogram of "density"**: The data is normally distributed. The median density is 0.9968. The inner quartile range is from 0.9956 - 0.9978.
+
+> **Histogram of "pH"**
+
+```{r echo=FALSE, Univariate_Plots_pH}
+# This looks at the descriptive statisitcs for the values of "pH".
+summary(df$pH)
+# Nothing stands out from the descriptive statistics.
+
+# This creates a histogram of the "pH"" values.
+ggplot(aes(x = pH), data = df) +
+  geom_histogram(binwidth = .05)
+  scale_x_continuous(limits = c(2.5, 4.5), breaks = seq(2.5, 4.5, .25))
+```
+
+>> **Histogram of "pH"**: The data is normally distributed. The median pH level is 3.31. The inner quartile range is from 3.21 - 3.40.
+
+> **Histogram of "sulphates"**
+
+```{r echo=FALSE, Univariate_Plots_sulphates}
+# This looks at the descriptive statisitcs for the values of "sulphates".
+summary(df$sulphates)
+
+# This creates a histogram of the "sulphates"" values.
+ggplot(aes(x = sulphates), data = df) +
+  geom_histogram(binwidth = .1)
+  scale_x_continuous(limits = c(0, 2.25), breaks = seq(0, 2.25, .25))
+```
+
+>> **Histogram of "sulphates"**: The data is normally distributed with a skew to the right and some outliers. The median sulphate level is 0.62. The inner quartile range is from 0.55 - 0.
+
+> **Histogram of "alcohol"**
+
+```{r echo=FALSE, Univariate_Plots_alcohol}
+# This looks at the descriptive statisitcs for the values of "alcohol".
+summary(df$alcohol)
+
+# This creates a histogram of the "alcohol" values.
+ggplot(aes(x = alcohol), data = df) +
+  geom_histogram(binwidth = .1)
+  scale_x_continuous(limits = c(8, 15), breaks = seq(8, 15, .25))
+```
+
+>> **Histogram of "alcohol"**: The data is skewed to the right. The median alcohol level is 10.20%. The inner quartile range is from 9.50 - 11.10%.
+
+> **Histogram of "quality"**:
+
+```{r echo=FALSE, univariate_plots_quality_hist}
+# This looks at the descriptive statisitcs for the values of "quality".
+summary(df$quality)
+# Nothing stands out from the descriptive statistics.
+
+# This creates a histogram of the "quality"" values.
+ggplot(aes(x = quality), data = df) +
+  geom_histogram(binwidth = .1)
+  scale_x_continuous(limits = c(2, 9), breaks = seq(2, 9, 1))
+```
+
+>> **Histogram of "quality"**: Quality is measured on a scale of 0 - 10, with 0 being the worst and 10 being the best. The data is lumped into the values of 3, 4, 5, 6, 7, and 8, with the data concentrated at the 5 and 6 values. The median quality value is 6. The inner quartile range is from 5 - 6. Despite the lumped nature of the data, if the peaks of the column were to be traced, the data almost follows a normal distribution.
+
+## Univariate Analysis
+
+### What is the structure of your dataset?
+> The dataset, wineQualityReds.csv, stores information about red wines. It contains 1,599 observations of wine. The input variables are properties of the wine (IE PH values, residual sugar, and total sulfur dioxide), all of which are quantitative variables with the exception of wine ID number. There are 12 total input variables, and 1 output variable. The output variable is the quality variable. Quality is rated on a scale from 0-10, 0 being the worst, and quality is derived from the median quality rating of at least three wine experts.
+
+> Other Observations:
+>> The quality rating inner quartile range is from 5 - 6, and the median rating is 6.
+>> The inner quartile range for residual sugar is from levels 1.90 - 2.60. The median residual sugar level is 2.20.
+>> The alcohol inner quartile range is from 9.50 - 11.10%. The median alcohol level is 10.20%. The histogram of the data is skewed right, which makes intuitive sense, because not many wines exist that have alcohol levels below 8%.
+
+
+### What is/are the main feature(s) of interest in your dataset?
+> My main interests are the output variable, quality, and the input variable, residual sugar. I beleive as residual sugar increases, so will the quality ratings. 
+
+### What other features in the dataset do you think will help support your feature(s) of interest.
+> Alcohol level and pH levels will likely influecnce the ratings. Higher alcohol levels could increase ratings, while low pH levels (high acidity wines) could lower the ratings.
+
+### Did you create any new variables from existing variables in the dataset?
+> The "X" column, which simply labeled each wine from 1 to 1599 was renamed to "wine.id.num."
+
+### Of the features you investigated, were there any unusual distributions?
+
+> There were no unusual distributions.
+
+
+## Bivariate Plots Section
+
+> **Scatterplot Matrix**
+
+```{r echo=FALSE, Bivariate_Plots_scatter_plot}
+# This codes comes from Source 4 in the Sources Section.
+# This installs the necesary package for the scatterplot matrix.
+install.packages("GGally")
+library(GGally)
+theme_set(theme_minimal(6))
+
+# This code comes from Source 4 in the Sources Section.
+# This sets the seed for reproducible results.
+set.seed(1836)
+df_subset <- subset(df, select = -c(wine.id.num, fixed.acidity, volatile.acidity, citric.acid ))
+names(df_subset)
+ggpairs(df_subset[sample.int(nrow(df_subset), 1000), ])
+
+# This resets the text size.
+theme_set(theme_minimal(20))
+```
+
+>> **Scatterplot Matrix Summary**: The matrix examines the correlation between the input variables, "residual.sugar, chlorides, free.sulfur.dioxide, total.sulfur.dioxide, density, pH, sulphates," and "alcohol,"" and the output variable, "quality."The matrix reveals that the input variables are weakly correlated to each other.The strongest correlation between two variables is seen in the r-statistic between "free.sulfur.dioxide"" and "total.sulfur.dioxide," 0.655. There would be a correlation between the two considering that the free variable accounts for a part of the total variable. No other input variables have an r-statistic with an absolute value of 0.5 or greater. The only correlation for an input variable and the output variable that is greater than or equal to the absolute value of 0.5 is "alcohol"" and "quality," 0.503. All other input variables are weakly correlated to the output variable.
+
+> **Relationship between Residual Sugar and Quality**
+
+>> **Scatterplot**
+
+```{r echo=FALSE, Bivariate_Plots_residual_sugar_scatter}
+# This creates the width multiplier for the plots. 
+# The plots' width are twice as long as the height.
+aspect_ratio <- 2
+
+# This creates the scatterplot with x = residual.sugar, 
+# and y = quality.
+# This code comes from Source 5 in the sources section.
+ggplot(aes(x = residual.sugar, y = quality), data = df) +
+  geom_point() +
+  scale_x_continuous(limits = c(0,16), breaks = seq(0,16,2)) +
+  scale_y_continuous(limits = c(2,9), breaks = seq(2,9,1)) +
+  ggsave("rs_s.wmf", height = 6, width = 6 * aspect_ratio)
+
+```
+
+>>> **Scatterplot Summary**: Without a jitterplot analysis, it is difficult to determine the nature of a correlation between residual sugar and quality through the scatterplot. I next create a jitterplot to better understand the nature of the correlation.
+
+>> **Jitterplot with Linear Regression Line**
+
+```{r echo=FALSE, Bivariate_Plots_residual_sugar_jitter}
+# This creates the scatterplot with x = residual.sugar,
+# and y = quality.
+# This code comes from Source 5 in the sources section.
+
+ggplot(aes(x = residual.sugar, y = quality), data = df) +
+  geom_jitter(alpha = 1/5)+
+  scale_x_continuous(limits = c(0,16), breaks = seq(0,16,2)) +
+  scale_y_continuous(limits = c(2,9), breaks = seq(2,9,1)) +
+  stat_smooth(method = lm) +
+  ggsave("rs_j.wmf", height = 6, width = 6 * aspect_ratio)
+```
+
+>>> **Jitterplot with Linear Regression Line Summary**: The concentrated values do not tell anything about the nature of the correlation.. From the regression line, the correlation is either slightly positive or non-existant. I conduct another jitter analysis with a line tracing the concentrated points to determine wheter a quadratic correlation exists.
+
+>> **Jitterplot with Tracing Line**
+
+```{r echo=FALSE, Bivariate_Plots_residual_sugar_jitter_quad}
+# This creates the scatterplot with x = alchol,
+# and y = quality.
+# This code comes from Source 5 in the sources section.
+ggplot(aes(x = residual.sugar, y = quality), data = df) +
+  geom_jitter(alpha = 1/5) +
+  scale_x_continuous(limits = c(0,16), breaks = seq(0,16,2)) +
+  scale_y_continuous(limits = c(2,9), breaks = seq(2,9,1)) +
+  stat_smooth() +
+  ggsave("rs_j_2.wmf", height = 6, width = 6 * aspect_ratio)
+```
+
+>>> **Jitterplot with Tracing Line Summary**: The jitterplot with the tracing line suggests that the relationship between residual sugar and quality does not exist. I conduct a regression analysis to determine whether a causal relationship exists on a statistically significant level.
+
+>> **Linear Regression Analysis**
+
+```{r echo=FALSE, Bivariate_Plots_regression_residual_sugar_quality}
+# This produces the r squared value and the p statistic 
+# to test for statsical significance.
+m1 <- lm(quality ~ residual.sugar, data = df)
+
+mtable(m1)
+```
+
+>>> **Linear Regression Analysis Summary**: The linear regression produced a correlation coefficient of 0.008 with a p-value of 0.583. This analysis uses a 5% threshold for statistical significance; values less than the threshold are statistically significant while values greater than the threshold are not. With a p-value greater than a 5% chance of comitting a type 1 error, we fail to reject the null hypothesis that residual sugar has no effect on quality. 
+
+> **Relationship between Alcohol and Quality**
+>> **Scatterplot**
+
+```{r echo=FALSE, Bivariate_Plots_alcohol_scatter}
+# This creates the scatterplot with x = alchol, 
+# and y = quality.
+# This code comes from Source 5 in the sources section.
+
+ggplot(aes(x = alcohol, y = quality), data = df) +
+  geom_point()+
+  scale_x_continuous(limits = c(8,15), breaks = seq(8,15,1)) +
+  scale_y_continuous(limits = c(2,9), breaks = seq(2,9,1)) +
+  ggsave("alc_s.wmf", height = 6, width = 6 * aspect_ratio)
+```
+
+>>> **Scatterplot Summary**: There seems to be a possible positive linear relationship between alcohol and quality. From this visual, it is difficult to discern where the values are most concentrated. I create a jitterplot to identify where the data is concentrated.
+
+>> **Jitterplot with Linear Regression Line**
+
+```{r echo=FALSE, Bivariate_Plots_alcohol_jitter}
+# This creates the jitterplot with x = alchol, and 
+# y = quality, and with a linear regression line.
+# This code comes from Source 5 in the sources section.
+ggplot(aes(x = alcohol, y = quality), data = df) +
+  geom_jitter(alpha = 1/5) +
+  scale_x_continuous(limits = c(8,15), breaks = seq(8,15,1)) +
+  scale_y_continuous(limits = c(2,9), breaks = seq(2,9,1)) +
+  stat_smooth(method = lm) +
+  ggsave("alc_j.wmf", height = 6, width = 6 * aspect_ratio)
+```
+>>> **Jitterplot with Linear Regression Line Summary**: The darker points show where the data is mmost concentrated. The regression line shows there is a positive correlations between alcohol and quality. However, the data is not strongly correlated. In my next jitterplot, I trace the concentrated points to try and identify a possible quadratic relationshiop between alcohol and quality.
+
+>> **Jitterplot with Tracing Line**
+
+```{r echo=FALSE, Bivariate_Plots_alcohol_jitter_quad}
+# This creates the jitterplot with x = alchol, 
+# and y = quality, and with a line that traces 
+# the data for possible quadratic relationships between x and y.
+# This code comes from Source 5 in the sources section.
+ggplot(aes(x = alcohol, y = quality), data = df) +
+  geom_jitter(alpha = 1/5) +
+  scale_x_continuous(limits = c(8,15), breaks = seq(8,15,1)) +
+  scale_y_continuous(limits = c(2,9), breaks = seq(2,9,1)) +
+  stat_smooth() +
+  ggsave("alc_j_2.wmf", height = 6, width = 6 * aspect_ratio)
+
+```
+
+>> **Jitterplot with Tracing Line Summary**: Although there is curve in the line, there is not enough evidence to support the assumption that alcohol shares a quadratic correlation with quality.
+
+> **Linear Regression Analysis**
+
+```{r echo=FALSE, Bivariate_Plots_regression_alcohol_quality}
+
+# This produces the r squared value and the p 
+# statistic to test for statsical significance.
+m2 <- lm(quality ~ alcohol, data = df)
+
+mtable(m2)
+
+```
+
+>> **Linear Regression Analysis Summary**: Although alcohol and quality are weakly correlated, the r-square statistic is .227, the linear regression produced a correlation coefficient of 0.361 with a p-value of 0.00. This analysis uses a 5% threshold for statistical significance; values less than the threshold are statistically significant while values greater than the threshold are not. With a less than 5% chance of comitting a type 1 error, we reject the null hypothesis that alcohol has no effect on quality. However, a multi-linear regression model will need to confirm whether alcohol causes increases in the quality ratings.
+
+> **Relationship between pH Level and Quality**
+
+>> **Scatterplot**
+
+```{r echo=FALSE, Bivariate_Plots_ph_level_scatter}
+# This creates the scatterplot with x = pH, 
+# and y = quality.
+# This code comes from Source 5 in the sources section.
+ggplot(aes(x = pH, y = quality), data = df) +
+  geom_point() +
+  scale_x_continuous(limits = c(2,5), breaks = seq(2,5,1)) +
+  scale_y_continuous(limits = c(2,9), breaks = seq(2,9,1)) +
+  ggsave("pH_s.wmf", height = 6, width = 6 * aspect_ratio)
+```
+
+>>> **Scatterplot Summary**: From the scatterplot, acidity levels range from a high of about 2.5, and a low of a little over 4. The data values are clumped together and a jitterplot will need to be used to discern the nature of a correlation between pH and quality.
+
+>> **Jitterplot with Linear Regression Line**
+
+```{r echo=FALSE, Bivariate_Plots_ph_level_jitter}
+# This creates the scatterplot with x = residual.sugar, and y = quality.
+# This code comes from Source 5 in the sources section.
+ggplot(aes(x = pH, y = quality), data = df) +
+  geom_jitter(alpha = 1/5) +
+  stat_smooth(method = lm) +
+  scale_x_continuous(limits = c(2,5), breaks = seq(2,5,1)) +
+  scale_y_continuous(limits = c(2,9), breaks = seq(2,9,1)) +
+  ggsave("pH_j.wmf", height = 6, width = 6 * aspect_ratio)
+```
+
+>>> **Jitterplot with Linear Regression Line Summary**: Although the jitterplot data is clumped together, there appears to be a weak negative correlation between pH and quality from the regression line. I conduct another jitter analysis that traces the concentrated data to determine whether a quadratic correlation exists.
+
+>> **Jitterplot with Tracing Line**
+
+```{r echo=FALSE, Bivariate_Plots_ph_level_jitter_quad}
+
+# This creates the scatterplot with x = residual.sugar, and y = quality.
+# This code comes from Source 5 in the sources section.
+ggplot(aes(x = pH, y = quality), data = df) +
+  geom_jitter(alpha = 1/5) +
+  stat_smooth() +
+  scale_x_continuous(limits = c(2,5), breaks = seq(2,5,1)) +
+  scale_y_continuous(limits = c(2,9), breaks = seq(2,9,1)) +
+  ggsave("pH_j_2.wmf", height = 6, width = 6 * aspect_ratio)
+
+```
+
+>>> **Jitterplot with Tracing Line Summary**: The results are similar to the previous jitterplot analysis. A trace of the concentrated data values suggests that a negative linear correlation exists between pH and quality. I conduct a linear regression analysis to determine whether the relationship is causal on a statistically significant level.
+
+>> **Linear Regression Analysis**
+
+```{r echo=FALSE, Bivariate_Plots_regression_pH_quality}
+
+# This produces the r squared value and the 
+# p statistic to test for statsical significance.
+m3 <- lm(quality ~ pH, data = df)
+
+mtable(m3)
+
+```
+
+
+>>> **Linear Regression Analysis Summary**: Although pH and quality are weakly correlated, the r-square statistic is .003, the linear regression produced a correlation coefficient of -0.302 with a p-value of 0.021. This analysis uses a 5% threshold for statistical significance; values less than the threshold are statistically significant while values greater than the threshold are not. With a less than 5% chance of comitting a type 1 error, we reject the null hypothesis that pH level has no effect on quality. As pH levels increase (resulting in a decrease in acidity), the quality ratings decrease. The experts seem to prefer wine that is more acidic. However, a multi-linear regression model will need to confirm whether rising pH level causes decreases in the quality ratings.
+
+# Bivariate Analysis
+
+### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?
+> When I performed a linear regression analysis on residual sugar and quality ratings, the features of interest, I did not find a causal relationship on a statistically significant level. However, I found that both alcohol and pH levels had causal relationships with quality on a statistically significant level. A percentage point increase in alcohol level yields a .361 increase in the quality rating. A unit increase in pH levels is associated with a 0.302 decrease in quality ratings. However, alcohol and ph levels will need to be tested in a multi-linear regression analysis to determine whether there causal relationships remain statistically significant.
+
+### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
+> The only significant correlation I found between input variables was the correlation between free.sulfur.dioxide and total.sulfur.dioxide. The r statistic of 0.655 made sense because free.sulfur.dioxide is part of the calculation of total.sulfur.dioxide.
+
+### What was the strongest relationship you found?
+> The strongest causal relationship found was the relationship between alcohol and quality ratings. The r-squared statistic was .227, which suggests a relatively weak relationship. However, the p-value of 0.00 suggests that although the relationship is weak, there is about a 0.00% chance of comitting a type 1 error, suggesting that it could exist. Only a multi-linear regression analysis can determine whether the relationship between alcohol and quality is truly causal.
+
+# Multivariate Plots Section
+
+> **Multi-Linear Regression Analysis**
+
+```{r echo=FALSE, Multivariate_Plots_regression_analysis}
+
+names(df)
+
+# This creates the multi-linear regression analysis.
+reg1 <- lm(formula = quality ~ residual.sugar, data = df)
+reg2 <- update(reg1, ~ . + alcohol)
+reg3 <- update(reg2, ~ . + pH)
+reg4 <- update(reg3, ~ . + chlorides)
+reg5 <- update(reg4, ~ . + free.sulfur.dioxide)
+reg6 <- update(reg5, ~ . + total.sulfur.dioxide)
+reg7 <- update(reg6, ~ . + density)
+reg8 <- update(reg7, ~ . + sulphates)
+reg9 <- update(reg8, ~ . + fixed.acidity)
+reg10 <- update(reg9, ~ . + volatile.acidity)
+reg11 <- update(reg10, ~ . + citric.acid)
+
+mtable(reg1, reg2, reg3, reg4, reg5,
+       reg6, reg7, reg8, reg9, reg10, reg11)
+
+```
+
+>> **Multi-Linear Regression Analysis Summary**: All the input variables were regressed against quality and 7 of the 11 variables had statistically significant causal relationships with quality at the 5% threshold for type 1 errors. The feature of interest, residual sugar, did not have a statistically significant relationship with quality. Alcohol was found to have a causal relationship on the 0.1% type 1 error threshold. A percentage point increase in the level of alcohol is associated with a .276 point increase in the quality rating. pH levels were found to have an inverse relationship with quality on the 5% type 1 error threshold. A unit increase in pH (a drop in acidity) corresponded to a .414 point decrease in the quality ratings. While wine experts preferred more acidic wines, they did not like wines with volatile acidity. Volatile acidity had a causal relationship with quality that was significant on the 0.1% type 1 error threshold. A unit increase with volatile acidity corresponded to a 1.084 point decrease in the quality ratings. Sulphate levels had a positive causal relationship on the 0.1% type 1 error threshold. A unit increase in the sulphate leves corresponded to a 0.916 point increase in the quality ratings. Free sulfur dioxide had a positive causal relationship with the quality ratings on a 5% type 1 error threshold. A unit increase of free sulfur dioxide was associated with a 0.004 point increase in the quality ratings. Total sulfur dioxide had a negative causal relationship with the quality ratings on a 0.1% type 1 error threshold. A unit increase in total sulfur dioxide corresponded to a 0.003 point drop in the quality ratings. Finally, chlorides had a negative causal relationship with the quality ratings on a 0.1% type 1 error threshold. A unit increase in chlorides corresponded to a 1.874 decrease in the quality ratings. While many input variables were found to share statistical significance causal relationships with the quality ratings, the findings showed little practical significance. The 11 input variables only explained 36.1% of the quality ratings data; the r-squared statistic was 0.361.
+
+> **Jitterplot: pH vs Alcohol with Colored Quality**
+
+```{r echo=FALSE, Multivariate_Plots_plot2}
+# This code creates the categorical variable "quality.bucket"
+df$quality.bucket <- cut(df$quality, c(2,3,4,5,6,7,8))
+summary(df$quality.bucket)
+
+# This creates the jitterplot with x = pH, and y = alcohol. 
+# It is grouped by the quality buckets.
+# This code comes from Source 5 in the sources section.
+ggplot(aes(x = pH, y = alcohol, color = quality.bucket), data = df) +
+  geom_jitter(alpha = 1/3) +
+  scale_color_brewer(type = 'seq',
+    guide = guide_legend(title = 'Quality Ratings', reverse = TRUE,
+    override.aes = list(alpha = 1, size = 2))) +
+  scale_x_continuous(limits = c(2,5), breaks = seq(2,5,1)) +
+  scale_y_continuous(limits = c(7,15), breaks = seq(7,15,1)) +
+  theme_dark() +
+  ggsave("qual_ph_alc.wmf", height = 6, width = 6 * aspect_ratio)
+
+```
+
+>> **Jitterplot: pH vs Alcohol with Colored Quality Summary**: pH levels have a negative causal relationship with quality (more acidic wines are rated higher), while percentage alcohol per volume has positive causal relationship with quality. Therefore, it makes intuitive sense that the highest rated wines would be highly acidic with high alcohol levels.
+
+> **Jitterplot: Alcohol vs Residual Sugar with Colored Quality**
+
+```{r echo=FALSE, Multivariate_Plots_plot3}
+
+# This creates the jitterplot with x = alochol, and y = quality. 
+# It is grouped by residual sugar.
+# This code comes from Source 5 in the sources section.
+ggplot(aes(x = alcohol, y = residual.sugar, color = quality.bucket), data = df) +
+  geom_jitter(alpha = 1/2) +
+  scale_color_brewer(type = 'seq',
+    guide = guide_legend(title = 'Quality Ratings', reverse = TRUE, 
+    override.aes = list(alpha = 1, size = 2))) +
+  scale_x_continuous(limits = c(8,15), breaks = seq(8,15,1)) +
+  scale_y_continuous(limits = c(0,16), breaks = seq(0,16,2)) +
+  theme_dark() +
+  ggsave("qual_alc_ph.wmf", height = 6, width = 6 * aspect_ratio)
+```
+
+>> **Jitterplot: Alcohol vs Residual Sugar with Colored Quality Summary**: Alcohol has a positive causal relationship with the quality ratings, while residual sugar does not share a statistically significant correlation with the quality ratings. From the jitterplot, the wines that have the highest quality ratings are those that have high percentage alcohol per volume levels and low residual sugar content.
+
+> **Jitterplot: pH vs Residual Sugar with Colored Quality**: 
+
+```{r echo=FALSE, Multivariate_Plots_plot4}
+
+# This creates the jitterplot with x = pH, and y = residual sugar. 
+# It is grouped by the quality buckets.
+# This code comes from Source 5 in the sources section.
+ggplot(aes(x = pH, y = residual.sugar, color = quality.bucket), data = df) +
+  geom_jitter(alpha = 1/3) +
+  scale_color_brewer(type = 'seq',
+    guide = guide_legend(title = 'Quality Ratings', reverse = TRUE, 
+    override.aes = list(alpha = 1, size = 2))) +
+  scale_x_continuous(limits = c(2,5), breaks = seq(2,5,1)) +
+  scale_y_continuous(limits = c(0,16), breaks = seq(0,16,2)) +
+  theme_dark() +
+  ggsave("qual_ph_sug.wmf", height = 6, width = 6 * aspect_ratio)
+
+```
+
+>> **Jitterplot: pH vs Residual Sugar with Colored Quality Summary**: pH has a negative causal relationship with quality, while residual sugar does not share a statistically significant correlation with the quality. This plot shows no relationship between pH and residual sugar.
+
+# Multivariate Analysis
+
+### Talk about some of the relationships you observed in this part of the investigation. Were there features that strengthened each other in terms of looking at your feature(s) of interest?
+
+> I observed the relationship between acidity and alcohol. Wines with high acidity and high percentage alcohol per volume had higher quality ratings. I also observed the relationship between alcohol and residual sugar. Wines with high percentage level of alcohol per volume and low sugar levels had higher quality ratings.
+
+### Were there any interesting or surprising interactions between features?
+
+> The relationship between alcohol and sugar surprised me. I assumed the wine experts would like sugar and thought they would prefer wine with both high alcohol percentage levels per volume and residual sugar content.
+
+### OPTIONAL: Did you create any models with your dataset? Discuss the strengths and limitations of your model.
+
+> While 7 of the 11 input variables were found to share statistical significance causal relationships with the quality ratings, the findings showed little practical significance. The 11 input variables only explained 36.1% of the quality ratings data; the r-squared statistic was 0.361. Future research needs to investigate more input variables in order to find a higher r-squared statistic closer to 1, and to see whether the 7 input variables in this analysis retain their causal relationships.
+
+------
+
+# Final Plots and Summary
+
+### Plot One
+```{r echo=FALSE, Plot_One}
+# This creates the jitterplot with x = alchol, 
+# and y = quality, and with a line that traces 
+# the data for possible quadratic relationships between x and y.
+# This code comes from Sources 5 & 6 in the sources section.
+ggplot(aes(x = alcohol, y = quality), data = df) +
+  geom_jitter(alpha = 1/5) +
+  scale_x_continuous(limits = c(8,15), breaks = seq(8,15,1)) +
+  scale_y_continuous(limits = c(2,9), breaks = seq(2,9,1)) +
+  stat_smooth() +
+  ggtitle('Relationship of Alcohol vs Quality') +
+  xlab('Percentage Alcohol Per Volume')+
+  ylab('Quality Rating (Scale of 0-10)') +
+  ggsave("plot1.wmf", height = 6, width = 6 * aspect_ratio)
+
+```
+
+### Description One
+
+> Although alcohol shared a causal linear relationship with quality, future research should further investigate this relationship. More wine samples with lower and higher alcohol levels could reveal a possible quadratic relationship with a negative slope.
+
+### Plot Two
+
+```{r echo=FALSE, Plot_Two}
+# This creates the jitterplot with x = pH, and y = residual sugar. 
+# It is grouped by the quality buckets.
+# This code comes from Source 5 in the sources section.
+ggplot(aes(x = pH, y = residual.sugar, color = quality.bucket), data = df) +
+  geom_jitter(alpha = 1/3) +
+  scale_color_brewer(type = 'seq',
+    guide = guide_legend(title = 'Quality Ratings', reverse = TRUE, 
+    override.aes = list(alpha = 1, size = 2))) +
+  scale_x_continuous(limits = c(2,5), breaks = seq(2,5,1)) +
+  scale_y_continuous(limits = c(0,16), breaks = seq(0,16,2)) +
+  theme_dark() +
+  ggtitle('Relationship of pH vs Residual Sugar with Colored Quality') +
+  xlab('pH Levels (Scale of 1-7)')+
+  ylab('Residual Sugar Levels') +
+  ggsave("plot2.wmf", height = 6, width = 6 * aspect_ratio)
+```
+
+### Description Two
+
+> I was surprised to see that sugar and pH levels did not share a significant correlation. While high sugar addictions have been well documented in western civilization, the most highly rated wines, the ones with the lower pH levels, were not the wines with the most sugar. It is possible that I made an assumption error by extending my notions of sugar addiction to wine experts.
+
+### Plot Three
+
+```{r echo=FALSE, Plot_Three}
+# This creates the jitterplot with x = alochol, and y = quality. 
+# It is grouped by residual sugar.
+# This code comes from Source 5 in the sources section.
+ggplot(aes(x = alcohol, y = residual.sugar, color = quality.bucket), data = df) +
+  geom_jitter(alpha = 1/2) +
+  scale_color_brewer(type = 'seq',
+    guide = guide_legend(title = 'Quality Ratings', reverse = TRUE, 
+    override.aes = list(alpha = 1, size = 2))) +
+  scale_x_continuous(limits = c(8,15), breaks = seq(8,15,1)) +
+  scale_y_continuous(limits = c(0,16), breaks = seq(0,16,2)) +
+  theme_dark() +
+  ggtitle('Relationship of Alcohol vs Residual Sugar with Colored Quality') +
+  xlab('Percentage Alcohol per Volume') +
+  ylab('Residual Sugar Levels')
+  ggsave("plot3.wmf", height = 6, width = 6 * aspect_ratio)
+```
+
+### Description Three
+
+> I was surpised to find that the most highly rated wines had high percentage alcohol per Volume but low sugar quantities. Again, I made the error of extending my notions of sugar addiciton to wine experts.
+
+------
+
+# Reflection
+
+> There were several surprising findings in this analysis. While 7 of the 11 input variables were found to be statistically significant, the 11 input variables only explained 36.1% of the quality ratings values. It is unusual to find so many statistically significant causal relationships, and it is even more unusual that all the causal relationships were practically insignificant. 
+
+> One of the shortcomings of this analaysis was the sample size; it needed to be larger. Further investigation with a larger range of alcohol values needs to be investigated for a possible negative quadratic correlation between percentage alcohol level and quality ratings. Finally, the biggest shortcoming was the dataset needed more input variables. The 11 input variables regressed aqainst quality only accounted for 36.1% of the quality rating values. More input variables would increase the r-squared statistic to a value closer to 1. Furthermore, a higher r-squared value would help determine whether the causal relationships found in this analysis hold when all the input variables explain most of the quality rating values.
+
+> My methodology for the analysis was to first analyze the individual variables for basic descriptive statistics. I then used bivariate scatterplots to determine whether the variables I was interested in (residual sugar, percentage alcohol per volume, and pH) may have causal relationships with quality. I then created multivariate analyses of residual sugar, percentage alcohol per volume, and pH and colored them with the quality ratings to determine how the input variables interacted with one another. 
+
+> I struggled the most with the multivariate plots. Finding color schemes that made the graphs more legible was challenging. I had my most success with my regression models. It is very rare to find over half of your input variables to be causally related to the output variable.
+
+## Sources
+> 1. https://stackoverflow.com/questions/7531868/how-to-rename-a-single-column-in-a-data-frame
+> 2. https://s3.amazonaws.com/udacity-hosted-downloads/ud651/wineQualityInfo.txt
+> 3. https://www.r-statistics.com/2013/05/log-transformations-for-skewed-and-wide-distributions-from-practical-data-science-with-r/
+> 4. DAND Semester 2, Exploratory Data Analysis, Lesson 7, "Quiz: Scatterplot Matrices"
+> 5. https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf
+> 6. http://www.sthda.com/english/wiki/ggplot2-title-main-axis-and-legend-titles
+> 7. https://cran.r-project.org/mirrors.html
